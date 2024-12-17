@@ -38,7 +38,6 @@ process FREYJA_DEMIX {
 
 process FREYJA_COVARIANTS {
     publishDir "${params.output}/covariants", mode: 'copy'
-    errorStrategy 'ignore'
     
     input:
     val sra_accession
@@ -52,6 +51,6 @@ process FREYJA_COVARIANTS {
 
     script:
     """
-    freyja covariants ${input_bam} ${params.min_site} ${params.max_site} --output ${sra_accession}.covariants.tsv --ref-genome ${ref} --gff-file ${annot}
+    freyja covariants ${input_bam} ${params.min_site} ${params.max_site} --output ${sra_accession}.covariants.tsv --annot ${annot}
     """
 }

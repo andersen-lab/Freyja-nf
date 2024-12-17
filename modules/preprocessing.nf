@@ -76,8 +76,7 @@ process IVAR_TRIM {
     val sra_accession
     path sorted_bam
     path bam_index
-    val primer_scheme
-    path bedfiles
+    path bedfile
 
     output:
     val sra_accession
@@ -85,7 +84,7 @@ process IVAR_TRIM {
 
     script:
     """
-    ivar trim -x 4 -e -m 80 -i ${sorted_bam} -b ${bedfiles}/${primer_scheme}.bed -p ${sra_accession}.trimmed.bam
+    ivar trim -x 4 -e -m 80 -i ${sorted_bam} -b ${bedfile} -p ${sra_accession}.trimmed.bam
     """
 }
 
