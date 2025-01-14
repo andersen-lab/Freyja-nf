@@ -9,13 +9,11 @@ baseDir = file("$baseDir")
 fastq_dir = file(params.fastq_dir)
 ref = file(params.ref)
 bedfile = file("${baseDir}/data/bedfiles/ARTICv5.3.2.bed")
-barcodes = file("${baseDir}/data/usher_barcodes.feather")
+barcodes = file("${baseDir}/data/barcodes/usher_barcodes.feather")
 annot = file(params.annot)
 
 include {
-    CUTADAPT_TRIM;
     MINIMAP2;
-    MINIMAP2_UNKNOWN_PRIMER;
     SAMTOOLS_1;
     SAMTOOLS_2;
     IVAR_TRIM;
@@ -34,12 +32,11 @@ workflow fastq {
     .map { k, v -> tuple(k, v[1], v[0]) }
     .set { fastq_ch }
 
-    process_known_primer(fastq_ch)
+    preprocessing(fastq_ch)
 }
 
 
-
-workflow process_known_primer {
+workflow preprocessing {
     take: known_primer_fastq_ch
 
     main:
@@ -67,8 +64,8 @@ workflow freyja {
         .collect()
         .set { demix_ch }
 
-    // FREYJA_COVARIANTS(sra_accession, input_bam, bam_index, ref, annot)
-    //     .collect()
-    //     .set { covariants_ch }
+    FREYJA_COVARIANTS(sra_accession, input_bam, bam_index, ref, annot)
+        .collect()
+        .set { covariants_ch }
 }
 

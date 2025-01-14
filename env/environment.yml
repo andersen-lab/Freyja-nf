@@ -1,0 +1,11 @@
+name: freyja-nf
+channels:
+    - bioconda
+    - conda-forge
+dependencies:
+  - bioconda::cutadapt=4.4
+  - bioconda::freyja=1.5.2
+  - bioconda::minimap2=2.26
+  - conda-forge::pyarrow
+  - conda-forge::google-cloud-sdk=458.0.1
+

@@ -51,6 +51,7 @@ process FREYJA_COVARIANTS {
 
     script:
     """
-    freyja covariants ${input_bam} ${params.min_site} ${params.max_site} --output ${sra_accession}.covariants.tsv --annot ${annot}
+    echo ${ref}
+    freyja covariants ${input_bam} ${params.min_site} ${params.max_site} --ref-genome ${ref} --output ${sra_accession}.covariants.tsv --annot ${annot}
     """
 }
