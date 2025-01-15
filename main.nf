@@ -2,7 +2,7 @@
 nextflow.enable.dsl=2
 
 /*
- * Automated pipeline for Freyja analysis of NICD data
+ * Automated pipeline for Freyja analysis of raw fastq files
  */
 
 baseDir = file("$baseDir")
@@ -28,7 +28,7 @@ include {
 
 workflow fastq {
     Channel
-    .fromFilePairs("${params.fastq_dir}/*/*_R{1,2}_001.fastq.gz")
+    .fromFilePairs("${params.fastq_dir}/*_R{1,2}_001.fastq.gz")
     .map { k, v -> tuple(k, v[1], v[0]) }
     .set { fastq_ch }
 
