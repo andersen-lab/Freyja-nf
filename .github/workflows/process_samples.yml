@@ -23,24 +23,22 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Setup Python
-        run: |
-              echo ${{secrets.DPILZ_USR_PWD}} | sudo -S dnf install python3 -y
-              echo ${{secrets.DPILZ_USR_PWD}} | sudo -S dnf install python3-pip -y
-              pip3 install pandas numpy pyyaml ffq epiweeks git+https://github.com/outbreak-info/python-outbreak-info.git@new_docs
-              
 
-      - name: 'Get accession list'
-        id: get_accession_list
-        run: |
-              python scripts/get_accession_list.py $BATCH_SIZE
-              if [[ -f data/accession_list.csv ]]; then
-                echo "::set-output name=run_jobs::true"
-              else
-                echo "::set-output name=run_jobs::false"
-              fi
+      - name: 'Set up gcloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+        with:
+          version: '>= 363.0.0'
 
+      - id: 'auth'
+        name: 'Authenticate with gcloud'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          workload_identity_provider: 'projects/12767718289/locations/global/workloadIdentityPools/github/providers/freyja-sra'
+          service_account: 'outbreak-ww@andersen-lab-primary.iam.gserviceaccount.com'
+    
+      - name: 'Fetch fastq files'
+        run: |
+              gcloud storage cp ... # Fetch fastq files from cloud storage
 
   run_samples:
       needs: [setup]
@@ -60,12 +58,6 @@ jobs:
         - name: Setup nextflow
           uses: nf-core/setup-nextflow@v1
         
-        - name: Setup Python
-          run: |
-                echo ${{secrets.DPILZ_USR_PWD}} | sudo -S dnf install python3 -y
-                echo ${{secrets.DPILZ_USR_PWD}} | sudo -S dnf install python3-pip -y
-                pip3 install pandas numpy pyyaml ffq epiweeks git+https://github.com/outbreak-info/python-outbreak-info.git@new_docs
-                
         - name: 'Set up Cloud SDK'
           uses: 'google-github-actions/setup-gcloud@v2'
           with:
@@ -77,10 +69,12 @@ jobs:
           with:
             workload_identity_provider: 'projects/12767718289/locations/global/workloadIdentityPools/github/providers/freyja-sra'
             service_account: 'outbreak-ww@andersen-lab-primary.iam.gserviceaccount.com'
+
         - name: 'Get accession list'
           id: get_accession_list
           run: |
                 python scripts/get_accession_list.py $BATCH_SIZE
+
         - name: Run pipeline on new samples
           run: |
                   export NXF_ENABLE_VIRTUAL_THREADS=false
@@ -92,29 +86,6 @@ jobs:
                   BG_PID=$!
                   wait $BG_PID
             
-        - name: Aggregate outputs
-          run: |
-                python scripts/aggregate_demix.py
-                python scripts/aggregate_variants.py
-                python scripts/aggregate_metadata.py
-
-        - id: 'download-aggregated-outputs'
-          name: 'Download aggregated outputs'
-          run: |
-                gcloud storage cp gs://outbreak-ww-data/aggregate/aggregate_demix.json outputs/aggregate/aggregate_demix.json --billing-project=andersen-lab-primary
-                gcloud storage cp gs://outbreak-ww-data/aggregate/aggregate_variants.json outputs/aggregate/aggregate_variants.json --billing-project=andersen-lab-primary
-                gcloud storage cp gs://outbreak-ww-data/aggregate/aggregate_metadata.json outputs/aggregate/aggregate_metadata.json  --billing-project=andersen-lab-primary
-
-        - id: 'concatenate-outputs'
-          name: 'Concatenate outputs'
-          run: |
-                python scripts/concat_agg_files.py
-        
-        - id: 'create-demix-by-week'
-          name: 'Create demix by week'
-          run: |
-                python scripts/aggregate_demix_by_week.py
-
         - id: 'upload-outputs'
           name: 'Upload Outputs to Cloud Storage'
           uses: 'google-github-actions/upload-cloud-storage@v2'
