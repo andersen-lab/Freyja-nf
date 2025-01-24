@@ -5,7 +5,7 @@ Automated SRA downloading, processing and [Freyja](https://github.com/andersen-l
 
 ## Usage
 ```bash
-nextflow run https://github.com/andersen-lab/Freyja-nf --fastq_dir [fastq_dir] --output [output_dir] 
+nextflow run https://github.com/andersen-lab/Freyja-nf -entry fastq --fastq_dir [fastq_dir] --output [output_dir] 
 ```
 
 ## Configuration
