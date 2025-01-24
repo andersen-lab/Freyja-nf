@@ -26,7 +26,7 @@ include {
 } from "./modules/freyja.nf"
 
 
-workflow fastq {
+workflow {
     Channel
     .fromFilePairs("${params.fastq_dir}/*_R{1,2}_001.fastq.gz")
     .map { k, v -> tuple(k, v[1], v[0]) }
