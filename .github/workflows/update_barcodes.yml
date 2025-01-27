@@ -1,0 +1,33 @@
+name: Update Barcodes
+
+on:
+  schedule:
+      - cron:  '0 0 */7 * *'
+
+jobs:
+  update_barcodes:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: 'Get updated barcodes and lineages from Freyja repo'
+        run: |
+              git clone http://github.com/andersen-lab/Freyja
+              cp Freyja/freyja/data/usher_barcodes.feather data/barcodes
+              cp Freyja/freyja/data/lineages.yml data/
+              cp Freyja/freyja/data/last_barcode_update.txt data/barcodes
+
+      - name: 'Commit and push changes'
+        run: |
+              git config --local user.name "$GITHUB_ACTOR"
+              git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
+              git remote set-url origin https://github.com/andersen-lab/Freyja-nf
+              if [[($(git status data/barcodes/usher_barcodes.feather --porcelain | wc -c) -ne 0)]]; then
+                git add data/barcodes/usher_barcodes.feather
+                git add data/barcodes/lineages.yml
+                git add data/barcodes/last_barcode_update.txt
+              fi
+              git commit -m "Update barcodes"
+              git push
