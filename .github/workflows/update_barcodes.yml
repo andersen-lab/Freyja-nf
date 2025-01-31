@@ -16,8 +16,8 @@ jobs:
         run: |
               git clone http://github.com/andersen-lab/Freyja
               cp Freyja/freyja/data/usher_barcodes.feather data/barcodes
-              cp Freyja/freyja/data/lineages.yml data/
               cp Freyja/freyja/data/last_barcode_update.txt data/barcodes
+              cp Freyja/freyja/data/lineages.yml data/
 
       - name: 'Commit and push changes'
         run: |
@@ -26,8 +26,8 @@ jobs:
               git remote set-url origin https://github.com/andersen-lab/Freyja-nf
               if [[($(git status data/barcodes/usher_barcodes.feather --porcelain | wc -c) -ne 0)]]; then
                 git add data/barcodes/usher_barcodes.feather
-                git add data/barcodes/lineages.yml
                 git add data/barcodes/last_barcode_update.txt
+                git add data/lineages.yml
               fi
               git commit -m "Update barcodes"
               git push
