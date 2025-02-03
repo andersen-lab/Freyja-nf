@@ -8,11 +8,11 @@ process FREYJA_VARIANTS {
     path ref
 
     output:
-    tuple val(sra_accession), path("${sra_accession}.variants.tsv"), path("${sra_accession}.depths.tsv")
+    tuple val(sra_accession), path("${sra_accession}.tsv"), path("${sra_accession}.depths")
 
     script:
     """
-    freyja variants ${input_bam} --variants ${sra_accession}.variants.tsv --depths ${sra_accession}.depths.tsv --ref ${ref}
+    freyja variants ${input_bam} --variants ${sra_accession}.tsv --depths ${sra_accession}.depths --ref ${ref}
     """
 }
 
@@ -30,9 +30,8 @@ process FREYJA_DEMIX {
     path "${sample_id}.demix.tsv"
 
     script:
-    def depthCutoff = 0 + (task.attempt - 1) * 10
     """
-    freyja demix ${variants} ${depths} --eps ${eps} --output ${sample_id}.demix.tsv --depthcutoff ${depthCutoff} --relaxedmrca --barcodes ${barcodes}
+    freyja demix ${variants} ${depths} --eps 0.0000001 --output ${sample_id}.demix.tsv --barcodes ${barcodes}
     """
 }
 
