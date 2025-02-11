@@ -1,4 +1,7 @@
 process FREYJA_VARIANTS {
+    cpus 4
+    memory '8 GB'
+    
     publishDir "${params.output}/variants", mode: 'copy'
 
     input:
@@ -17,6 +20,9 @@ process FREYJA_VARIANTS {
 }
 
 process FREYJA_DEMIX {
+    cpus 4
+    memory '8 GB'
+
     publishDir "${params.output}/demix", mode: 'copy'
     errorStrategy {task.attempt <= maxRetries  ? 'retry' : 'ignore' }
     maxRetries 1
@@ -31,11 +37,13 @@ process FREYJA_DEMIX {
 
     script:
     """
-    freyja demix ${variants} ${depths} --eps 0.0000001 --output ${sample_id}.demix.tsv --barcodes ${barcodes}
+    freyja demix ${variants} ${depths} --eps ${eps} --output ${sample_id}.demix.tsv --barcodes ${barcodes}
     """
 }
 
 process FREYJA_COVARIANTS {
+    cpus 4
+    memory '8 GB'
     publishDir "${params.output}/covariants", mode: 'copy'
     
     input:
@@ -50,7 +58,6 @@ process FREYJA_COVARIANTS {
 
     script:
     """
-    echo ${ref}
     freyja covariants ${input_bam} ${params.min_site} ${params.max_site} --ref-genome ${ref} --output ${sra_accession}.covariants.tsv --annot ${annot}
     """
 }
