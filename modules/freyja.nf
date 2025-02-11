@@ -1,7 +1,7 @@
 process FREYJA_VARIANTS {
     cpus 4
     memory '8 GB'
-    
+
     publishDir "${params.output}/variants", mode: 'copy'
 
     input:
@@ -21,7 +21,7 @@ process FREYJA_VARIANTS {
 
 process FREYJA_DEMIX {
     cpus 4
-    memory '8 GB'
+    memory '16 GB'
 
     publishDir "${params.output}/demix", mode: 'copy'
     errorStrategy {task.attempt <= maxRetries  ? 'retry' : 'ignore' }
