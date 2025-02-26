@@ -3,7 +3,6 @@
  */
 
 process MINIMAP2 {
-    //errorStrategy 'ignore'
     input:
     tuple val(sample_id), val(primer_scheme), path(reads)
     path ref
@@ -47,7 +46,7 @@ process IVAR_TRIM {
 
     script:
     """
-    ivar trim -x 4 -e -m 80 -i ${sorted_bam} -b ${bedfile} -p ${sra_accession}.trimmed.bam
+    ivar trim -i ${sorted_bam} -b ${bedfile} -p ${sra_accession}.trimmed.bam -q ${params.min_quality} -m ${params.min_read_length} -s ${params.sliding_window_width} -e -x ${params.primer_offset}
     """
 }
 
