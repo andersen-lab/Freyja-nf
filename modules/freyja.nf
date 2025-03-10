@@ -29,7 +29,6 @@ process FREYJA_DEMIX {
 
     input:
     tuple val(sample_id), path(variants), path(depths)
-    val eps
     path barcodes
 
     output:
@@ -37,7 +36,7 @@ process FREYJA_DEMIX {
 
     script:
     """
-    freyja demix ${variants} ${depths} --eps ${eps} --output ${sample_id}.demix.tsv --barcodes ${barcodes}
+    freyja demix ${variants} ${depths} --eps ${params.eps} --output ${sample_id}.demix.tsv --barcodes ${barcodes}
     """
 }
 
@@ -61,3 +60,5 @@ process FREYJA_COVARIANTS {
     freyja covariants ${input_bam} ${params.min_site} ${params.max_site} --ref-genome ${ref} --output ${sra_accession}.covariants.tsv --annot ${annot}
     """
 }
+
+process FREYJA_AGGREGATE {}
