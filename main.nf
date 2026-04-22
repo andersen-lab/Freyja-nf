@@ -8,7 +8,7 @@ nextflow.enable.dsl=2
 baseDir = file("$baseDir")
 fastq_dir = file(params.fastq_dir)
 ref = file(params.ref)
-bedfile = file("${baseDir}/data/bedfiles/ARTICv5.3.2.bed")
+bedfile = file("${baseDir}/data/bedfiles/ARTICv5.4.2.bed")
 barcodes = file("${baseDir}/data/barcodes/usher_barcodes.feather")
 annot = file(params.annot)
 
